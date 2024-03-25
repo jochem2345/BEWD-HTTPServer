@@ -24,7 +24,6 @@ public class ConnectionHandler {
             "Content-Length: {{CONTENT_LENGTH}}\n" +
             "Content-Type: text/html\n";
 
-
     private final Socket socket;
 
     public ConnectionHandler(final Socket socket) {
@@ -49,7 +48,11 @@ public class ConnectionHandler {
     private void parseHttpRequest(final BufferedReader inputStreamReader, final BufferedWriter outputStreamWriter) throws IOException {
         var startLine = true;
         String requestLine;
+
         while ((requestLine = inputStreamReader.readLine()) != null) {
+            if (startLine) {
+                System.out.println("-> Received the following HTTP-request:");
+            }
             System.out.println(requestLine);
             if (startLine) {
                 startLine = false;
@@ -64,15 +67,28 @@ public class ConnectionHandler {
 
     private void processStartLine(final BufferedWriter outputStreamWriter, final String requestLine) throws IOException {
         var startLineTokens = requestLine.split(" ");
+
+        checkForUnsupportedMethods(outputStreamWriter, startLineTokens);
+        checkForUnsupportedHTTPVersions(outputStreamWriter, startLineTokens);
+
+
+        if (!"/index.html".equals(startLineTokens[1])) {
+            outputStreamWriter.write(generateHeader(HTTP_STATUS_404, null));
+            outputStreamWriter.newLine();
+            outputStreamWriter.flush();
+        }
+    }
+
+    private void checkForUnsupportedMethods(final BufferedWriter outputStreamWriter, String[] startLineTokens) throws IOException {
         if (!"GET".equals(startLineTokens[0])) {
             outputStreamWriter.write(generateHeader(HTTP_STATUS_501, null));
             outputStreamWriter.newLine();
             outputStreamWriter.flush();
-        } else if (!"/index.html".equals(startLineTokens[1])) {
-            outputStreamWriter.write(generateHeader(HTTP_STATUS_404, null));
-            outputStreamWriter.newLine();
-            outputStreamWriter.flush();
-        } else if (!"HTTP/1.1".equals(startLineTokens[2])) {
+        }
+    }
+
+    private void checkForUnsupportedHTTPVersions(final BufferedWriter outputStreamWriter, String[] startLineTokens) throws IOException {
+        if (!"GET".equals(startLineTokens[0])) {
             outputStreamWriter.write(generateHeader(HTTP_STATUS_505, null));
             outputStreamWriter.newLine();
             outputStreamWriter.flush();
@@ -90,7 +106,6 @@ public class ConnectionHandler {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private String readFile(final String filename) {
@@ -107,12 +122,20 @@ public class ConnectionHandler {
                         OffsetDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME))
                 .replace("{{HTTP_STATUS}}", status);
 
+
+        header = header.replace("{{CONTENT_LENGTH}}", Integer.toString(90));
+
+        System.out.println("-> Responded with the following HTTP-headers:");
+        System.out.println(header);
+        return header;
+    }
+
+    private String setContentLength(final String header, final String filename) {
         var contentLength = Long.toString(0);
         if (filename != null) {
             contentLength = Long.toString(getPath(filename).toFile().length());
         }
-        header = header.replace("{{CONTENT_LENGTH}}", contentLength);
-        return header;
+        return header.replace("{{CONTENT_LENGTH}}", contentLength);
     }
 
     private Path getPath(final String filename) {

@@ -44,7 +44,8 @@ public class HttpServer {
     private void openServerSocket() {
         try {
             this.serverSocket = new ServerSocket(TCP_PORT);
-            System.out.println("Server accepting requests on port " + TCP_PORT);
+            System.out.println("Welcome the the JAVA-based HTTP-server!");
+            System.out.println("-> Server accepting requests on port " + TCP_PORT);
         } catch (IOException e) {
             throw new RuntimeException("Cannot open port " + TCP_PORT, e);
         }
