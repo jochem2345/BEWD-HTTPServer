@@ -88,7 +88,7 @@ public class ConnectionHandler {
     }
 
     private void checkForUnsupportedHTTPVersions(final BufferedWriter outputStreamWriter, String[] startLineTokens) throws IOException {
-        if (!"GET".equals(startLineTokens[0])) {
+        if (!"HTTP/1.1".equals(startLineTokens[2])) {
             outputStreamWriter.write(generateHeader(HTTP_STATUS_505, null));
             outputStreamWriter.newLine();
             outputStreamWriter.flush();

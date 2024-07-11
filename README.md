@@ -14,11 +14,13 @@ worden: [https://tools.ietf.org/html/rfc7230]().
 Bekijk de startcode in de master-branch. De server is op te starten via de
 main-methode van de `HttpServer` klasse.
 
-## 1) Een GET-request via de browser
+## 1) Een Request sturen via de browser
 
 Voer deze main-methode van de `HttpServer` klasse uit, zodat de Server wordt
 opgestart. Navigeer via je browser naar [http://localhost:8383/index.html]() om
-te zien wat de server teruggeeft.
+te zien wat de server teruggeeft. 
+
+Je hebt nu via je browser een HTTP-request uitgevoerd. Watvoor request?
 
 ## 2) De log in de console
 
@@ -61,9 +63,9 @@ lossen. Gebruik deze om het probleem op te lossen.
 
 # Opdrachten voor de les
 
-## 3) Gebruik Postman om een Request te sturen
+## 5) Gebruik Postman om een Request te sturen
 
-Gebruik nu Postman om een POST-request te sturen naar je eigen Http-server.
+Gebruik nu Postman om een GET-request te sturen naar je eigen Http-server.
 
 * Verstuur een GET naar URL de [http://localhost:8383/index.html]() en bekijk
   het resultaat.
@@ -71,19 +73,18 @@ Gebruik nu Postman om een POST-request te sturen naar je eigen Http-server.
   Is dit wat je verwacht? En kun je in de Java code de plek aanwijzen waar
   dit is uitgeprogrammeerd?
 
-## 3) Afhandelen van een POST-methode
+## 6) Afhandelen van een POST-methode
 
-### 2.7) Correcte versie van het Http-protocol
+Pas de code van de Http-Server nu zo aan dat ook een POST wordt geaccepteerd 
+en correct wordt afgehandeld.
 
-Zoek uit welke versie van het Http-protocol wordt gebruikt en zorg ervoor dat
-dit ook correct staat in de
-Http-response-header.
+* Na een POST-Request moet de Http-server de HTTP-statuscode voor CREATED 
+  terugsturen.
+* De Body van het HTTP-Request moet naar de console worden geprint.
 
-# Extra uitdaging
 
-Het Http-protocol kent meer methodes dan enkel de *GET*. Lees de RFC voor meer
-informatie en implementeer ook de
-methode *HEAD*.
+
+
 
 
 
