@@ -20,13 +20,13 @@ Voer deze main-methode van de `HttpServer` klasse uit, zodat de Server wordt
 opgestart. Navigeer via je browser naar [http://localhost:8383/index.html]() om
 te zien wat de server teruggeeft. 
 
-Je hebt nu via je browser een HTTP-request uitgevoerd. Watvoor request?
+Je hebt nu via je browser een HTTP-request uitgevoerd. Wat voor request?
 
 ## 2) De log in de console
 
 Bekijk de console van je IDE. Wat zie je hier precies terug?
 
-## 2) Helder krijgen hoe de HTTP-server werkt
+## 3) Helder krijgen hoe de HTTP-server werkt
 
 Om helder te krijgen hoe de HTTP-server werkt, maken we gebruik van het
 geheugenmodel. Hieronder het geheugenmodel op het moment dat `accept()`
@@ -40,7 +40,7 @@ wordt aangeroepen op de instantie van `ServerSocket`.
 * Wanneer is het Http-request nu volledig afgehandeld? Op welke regel code
   zit je dan?
 
-## 3) Het vinden van de oorzaak van een onvolledig HTML-bestand in de response
+## 4) Het vinden van de oorzaak van een onvolledig HTML-bestand in de response
 
 Misschien heb je het al opgemerkt, maar het HTML-bestand dat door de server
 wordt teruggegeven, wordt niet volledig getoond in de browser. Het stuk:
@@ -56,14 +56,14 @@ het HTTP-response. Bekijk de console van je IDE, waarin ook de headers van
 de response zijn terug te lezen.
 Welk onderdeel van de header zou de fout veroorzaken?
 
-## 4) Het oplossen van de oorzaak van een onvolledig HTML-bestand in de response
+## 5) Het oplossen van de oorzaak van een onvolledig HTML-bestand in de response
 
 De `ConnectionHandler` bevat al de benodigde methode om het probleem op te
 lossen. Gebruik deze om het probleem op te lossen.
 
 # Opdrachten voor de les
 
-## 5) Gebruik Postman om een Request te sturen
+## 6) Gebruik Postman om een Request te sturen
 
 Gebruik nu Postman om een GET-request te sturen naar je eigen Http-server.
 
@@ -73,7 +73,7 @@ Gebruik nu Postman om een GET-request te sturen naar je eigen Http-server.
   Is dit wat je verwacht? En kun je in de Java code de plek aanwijzen waar
   dit is uitgeprogrammeerd?
 
-## 6) Afhandelen van een POST-methode
+## 7) Afhandelen van een POST-methode
 
 Pas de code van de Http-Server nu zo aan dat ook een POST wordt geaccepteerd 
 en correct wordt afgehandeld.
