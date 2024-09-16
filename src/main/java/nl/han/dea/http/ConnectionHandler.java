@@ -25,6 +25,7 @@ public class ConnectionHandler {
             "Content-Type: text/html\n";
 
     private final Socket socket;
+    private String method = "GET";
 
     public ConnectionHandler(final Socket socket) {
         this.socket = socket;
@@ -42,7 +43,7 @@ public class ConnectionHandler {
 
         parseHttpRequest(inputStreamReader, outputStreamWriter);
 
-        writeResponseMessage(outputStreamWriter);
+        writeResponseMessage(outputStreamWriter, inputStreamReader);
     }
 
     private void parseHttpRequest(final BufferedReader inputStreamReader, final BufferedWriter outputStreamWriter) throws IOException {
@@ -67,12 +68,13 @@ public class ConnectionHandler {
 
     private void processStartLine(final BufferedWriter outputStreamWriter, final String requestLine) throws IOException {
         var startLineTokens = requestLine.split(" ");
+        method = startLineTokens[0];
 
         checkForUnsupportedMethods(outputStreamWriter, startLineTokens);
         checkForUnsupportedHTTPVersions(outputStreamWriter, startLineTokens);
 
 
-        if (!"/index.html".equals(startLineTokens[1])) {
+        if (!"/index.html".equals(startLineTokens[1]) && !"POST".equals(method)) {
             outputStreamWriter.write(generateHeader(HTTP_STATUS_404, null));
             outputStreamWriter.newLine();
             outputStreamWriter.flush();
@@ -80,7 +82,7 @@ public class ConnectionHandler {
     }
 
     private void checkForUnsupportedMethods(final BufferedWriter outputStreamWriter, String[] startLineTokens) throws IOException {
-        if (!"GET".equals(startLineTokens[0])) {
+        if (!"GET".equals(startLineTokens[0]) && !"POST".equals(startLineTokens[0])) {
             outputStreamWriter.write(generateHeader(HTTP_STATUS_501, null));
             outputStreamWriter.newLine();
             outputStreamWriter.flush();
@@ -95,16 +97,36 @@ public class ConnectionHandler {
         }
     }
 
-    private void writeResponseMessage(final BufferedWriter outputStreamWriter) {
+    private void writeResponseMessage(final BufferedWriter outputStreamWriter, BufferedReader inputStreamReader) throws IOException {
+        if ("POST".equals(method)) {
+            // Handle POST request
+            StringBuilder postData = new StringBuilder();
+            String line;
+            while ((line = inputStreamReader.readLine()) != null && !line.isEmpty()) {
+                // Read the request headers
+            }
+            while (inputStreamReader.ready() && (line = inputStreamReader.readLine()) != null) {
+                postData.append(line);
+            }
 
-        try {
-            outputStreamWriter.write(generateHeader(HTTP_STATUS_200, INDEX_HTML_PAGE));
+            System.out.println("Received POST data: " + postData);
+
+            outputStreamWriter.write(generateHeader(HTTP_STATUS_200, null));
             outputStreamWriter.newLine();
-            outputStreamWriter.write(readFile(INDEX_HTML_PAGE));
+            outputStreamWriter.write("<html><body><h1>POST Request Received</h1>");
+            outputStreamWriter.write("<p>Data: " + postData + "</p></body></html>");
             outputStreamWriter.newLine();
             outputStreamWriter.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } else {
+            try {
+                outputStreamWriter.write(generateHeader(HTTP_STATUS_200, INDEX_HTML_PAGE));
+                outputStreamWriter.newLine();
+                outputStreamWriter.write(readFile(INDEX_HTML_PAGE));
+                outputStreamWriter.newLine();
+                outputStreamWriter.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -123,7 +145,8 @@ public class ConnectionHandler {
                 .replace("{{HTTP_STATUS}}", status);
 
 
-        header = header.replace("{{CONTENT_LENGTH}}", Integer.toString(90));
+//        header = header.replace("{{CONTENT_LENGTH}}", Integer.toString(90));
+        header = setContentLength(header, filename);
 
         System.out.println("-> Responded with the following HTTP-headers:");
         System.out.println(header);
